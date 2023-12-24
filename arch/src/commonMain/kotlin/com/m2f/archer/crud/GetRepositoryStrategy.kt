@@ -7,7 +7,8 @@ import com.m2f.archer.crud.operation.StoreOperation
 import com.m2f.archer.crud.operation.StoreSyncOperation
 import com.m2f.archer.failure.Failure
 import com.m2f.archer.query.Get
-import com.m2f.archer.repository.MainSyncRepository
+import com.m2f.archer.repository.mainSyncRepository
+import com.m2f.archer.repository.storeSyncRepository
 import com.m2f.archer.repository.Repository
 import com.m2f.archer.repository.StoreSyncRepository
 import com.m2f.archer.repository.toRepository
@@ -25,12 +26,16 @@ fun <K, A> cacheStrategy(
     when (operation) {
         is MainOperation -> mainDataSource.toRepository()
         is StoreOperation -> storeDataSource.toRepository()
-        is MainSyncOperation -> MainSyncRepository(mainDataSource, storeDataSource, mainFallback)
-        is StoreSyncOperation -> StoreSyncRepository(
-            storeDataSource,
-            mainDataSource,
-            storeFallback,
-            mainFallback,
+        is MainSyncOperation -> mainSyncRepository(
+            remote = mainDataSource,
+            local = storeDataSource,
+            recoverableFailures = mainFallback
+        )
+        is StoreSyncOperation -> storeSyncRepository(
+            remote = mainDataSource,
+            local = storeDataSource,
+            recoverableFailures = storeFallback,
+            storeRecoverableFailures = mainFallback,
         )
     }
 }
@@ -51,7 +56,7 @@ infix fun <K, A> GetDataSource<K, A>.fallbackWith(store: StoreDataSource<K, A>):
  * @param q The query of type [Q] used to perform the get operation.
  * @return The result of the get operation, returned by invoking the created operation with the query [q].
  */
-suspend inline fun <reified K, reified A> GetRepositoryStrategy<K, A>.get(
+suspend fun <reified K, reified A> GetRepositoryStrategy<K, A>.get(
     operation: Operation,
     q: K,
 ) = create(operation).get(q)
