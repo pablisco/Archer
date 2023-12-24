@@ -17,20 +17,15 @@ typealias GetDataSource<K, A> = CRUDDataSource<Get<K>, A>
 typealias PutDataSource<K, A> = CRUDDataSource<Put<K, out A>, A>
 typealias StoreDataSource<K, A> = CRUDDataSource<KeyQuery<K, out A>, A>
 
-@Suppress("FUN_INTERFACE_WITH_SUSPEND_FUNCTION")
 fun interface DeleteDataSource<K> {
     suspend fun delete(q: Delete<K>): Either<Failure, Unit>
 }
 
-suspend inline fun <reified K, reified A> GetDataSource<K, A>.get(param: K): Either<Failure, A> =
-    invoke(Get(param))
+suspend inline fun <K, A> GetDataSource<K, A>.get(query: Get<K>): Either<Failure, A> =
+    invoke(query)
 
-suspend inline fun <reified K, reified A> PutDataSource<K, A>.put(
-    param: K,
-    value: A,
-): Either<Failure, A> = invoke(
-    Put(param, value),
-)
+suspend inline fun <K, A> GetDataSource<K, A>.get(queryKey: K): Either<Failure, A> =
+    get(Get(queryKey))
 
 suspend inline fun <reified K, reified A> PutDataSource<K, A>.post(
     param: K
@@ -38,10 +33,11 @@ suspend inline fun <reified K, reified A> PutDataSource<K, A>.post(
     Put(param, null),
 )
 
-suspend inline fun <reified K> PutDataSource<K, Unit>.put(param: K): Either<Failure, Unit> =
-    invoke(
-        Put(param, Unit),
-    )
+suspend fun <K, A> PutDataSource<K, A>.put(param: K, value: A): Either<Failure, A> =
+    invoke(Put(param, value))
+
+suspend fun <K> PutDataSource<K, Unit>.put(param: K): Either<Failure, Unit> =
+    invoke(Put(param, Unit))
 
 inline fun <K, T> getDataSource(crossinline block: suspend Raise<Failure>.(K) -> T): GetDataSource<K, T> =
     GetDataSource { query ->
