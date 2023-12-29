@@ -2,7 +2,6 @@ package com.m2f.archer.crud
 
 import com.m2f.archer.crud.operation.*
 import com.m2f.archer.failure.Failure
-import com.m2f.archer.query.Get
 import com.m2f.archer.repository.Repository
 import com.m2f.archer.repository.mainSyncRepository
 import com.m2f.archer.repository.storeSyncRepository
@@ -47,7 +46,7 @@ infix fun <K, A> GetDataSource<K, A>.fallbackWith(store: StoreDataSource<K, A>):
  * @param K The generic key type used within the get operation.
  * @param A The generic type parameter representing some additional context or requirement for the repository.
  * @param operation The [Operation] to be performed.
- * @param q The query of type [Q] used to perform the get operation.
+ * @param q The query of type [K] used to perform the get operation.
  * @return The result of the get operation, returned by invoking the created operation with the query [q].
  */
 suspend fun <K, A> GetRepositoryStrategy<K, A>.get(
