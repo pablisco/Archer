@@ -5,13 +5,9 @@ import com.m2f.archer.crud.operation.MainOperation
 import com.m2f.archer.crud.operation.MainSyncOperation
 import com.m2f.archer.crud.operation.StoreOperation
 import com.m2f.archer.crud.operation.StoreSyncOperation
-import com.m2f.archer.crud.plus
-import com.m2f.archer.crud.putDataSource
 import com.m2f.archer.failure.DataNotFound
 import com.m2f.archer.failure.Failure
-import com.m2f.archer.repository.MainSyncRepository
-import com.m2f.archer.repository.SingleDataSourceRepository
-import com.m2f.archer.repository.StoreSyncRepository
+import com.m2f.archer.repository.Repository
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe

@@ -3,20 +3,9 @@ package com.m2f.archer.repository
 import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.recover
-import com.airalo.babel.architecture.datasource.DataSource
 import com.m2f.archer.crud.*
 import com.m2f.archer.failure.Failure
-import com.m2f.archer.query.Delete
 import com.m2f.archer.query.Get
-
-fun <F, Q, A> DataSource<F, Q, A>.toRepository(): Repository<F, Q, A> =
-    Repository(::invoke)
-
-fun <K> DeleteDataSource<K>.toDataSource(): DataSource<Failure, Delete<K>, Unit> =
-    DataSource(::delete)
-
-fun <K> DeleteDataSource<K>.toDeleteRepository(): DeleteRepository<K> =
-    toDataSource().toRepository()
 
 fun <K, A> storeSyncRepository(
     remote: GetDataSource<K, A>,
